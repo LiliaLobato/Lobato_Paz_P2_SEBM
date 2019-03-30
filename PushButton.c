@@ -105,3 +105,65 @@ void PushButton_external_handler(void)
 	}
 }
 
+uint8_t get_pbn_flag(EXTERNAL_PushButton_SW_name ext_PB){
+	switch(ext_PB)
+	{
+	case PB0:
+		return(pb0_flag_g);
+		break;
+	case PB1:
+		return(pb1_flag_g);
+		break;
+	case PB2:
+		return(pb2_flag_g);
+		break;
+	case PB3:
+		return(pb3_flag_g);
+		break;
+	case PB4:
+		return(pb4_flag_g);
+		break;
+	case PB5:
+		return(pb5_flag_g);
+		break;
+	case PB6:
+		return(pb6_flag_g);
+		break;
+	}
+}
+
+void clear_pbn_flag(EXTERNAL_PushButton_SW_name ext_PB){
+	switch(ext_PB)
+	{
+	case PB0:
+		pb0_flag_g = FALSE;
+		break;
+	case PB1:
+		pb1_flag_g = FALSE;
+		break;
+	case PB2:
+		pb2_flag_g = FALSE;
+		break;
+	case PB3:
+		pb3_flag_g = FALSE;
+		break;
+	case PB4:
+		pb4_flag_g = FALSE;
+		break;
+	case PB5:
+		pb5_flag_g = FALSE;
+		break;
+	case PB6:
+		pb6_flag_g = FALSE;
+		break;
+	case ALL:
+		pb0_flag_g = FALSE;
+		pb1_flag_g = FALSE;
+		pb2_flag_g = FALSE;
+		pb3_flag_g = FALSE;
+		pb4_flag_g = FALSE;
+		pb5_flag_g = FALSE;
+		pb6_flag_g = FALSE;
+		break;
+	}
+}

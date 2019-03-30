@@ -1,19 +1,24 @@
 /**
- \file
- \brief
- This is the starter file of FlexTimer.
- In this file the FlexTimer is configured in overflow mode.
- \author J. Luis Pizano Escalante, luispizano@iteso.mx
- \date	21/03/2019
- \todo
- Add configuration structures.
+	\file
+	\brief
+		This is the starter file of FlexTimer.
+		In this file the FlexTimer is configured in overflow mode.
+	\author J. Luis Pizano Escalante, luispizano@iteso.mx
+	\date	21/03/2019
+	\todo
+	    Add configuration structures.
  */
+
+
 
 #include "FlexTimer.h"
 #include "MK64F12.h"
-#include "Delay.h"
+#include "Bits.h"
 
-void FTM0_ISR() {
+gpio_pin_control_register_t FTM_Pin_config = PORT_PCR_MUX(0x4);
+
+void FTM0_ISR()
+{
 
 }
 
@@ -46,64 +51,29 @@ uint32_t FlexTimer_get_output_frecuency(uint16_t FTM_channel)
 	return output_frecuency;
 }
 
-void FlexTimer_Init() {
-	/**Clock gating for FlexTimer*/
-	SIM->SCGC6 |= SIM_SCGC6_FTM0(1);
-	/**It enable the FTM*/
-	FTM0->MODE |= FTM_MODE_FTMEN_MASK;
-	/**Selects the FTM behavior in BDM mode.In this case in functional mode*/
-	FTM0->CONF |= FTM_CONF_BDMMODE(3);
-	/**Assign modulo register with a predefined value*/
-	FTM0->MOD = 0x05; //Valor al que se desborda
-	/**Configure FlexTimer in output compare in toggle mode*/
-	FTM0->CONTROLS[0].CnSC = FTM_CnSC_MSA(1) | FTM_CnSC_ELSA(1); //Control del canal 0 en status control
-	/**Assign channel value register with a predefined value*/
-	FTM0->CONTROLS[0].CnV = 0x03; //Cuando se llegue a este valor, se va a dar un toogle
-	/**Select clock source and prescaler*/
-	FTM0->SC |= FTM_SC_CLKS (FLEX_TIMER_CLKS_1) | FTM_SC_PS(FLEX_TIMER_PS_128);
+void FlexTimer_PWM_Modify_Duty_Cycle(uint8_t intensity, FTM_Channel_t channel)
+{
+	switch(channel)
+	{
+	case CH0:
+		FTM0->CONTROLS[0].CnV = intensity;	//RED
+		break;
+
+	case CH1:
+		FTM0->CONTROLS[1].CnV = intensity; //Green
+		break;
+
+	case CH2:
+		FTM0->CONTROLS[2].CnV = intensity; //BLUE
+		break;
+		}
+
 }
 
-void Compare_init(uint32_t mod, uint32_t cnv, input_capture_els els,
-		uint8_t Flex_Timer_clk_N, uint8_t Flex_Timer_ps_N) {
-	/**Clock gating for FlexTimer*/
-	SIM->SCGC6 |= SIM_SCGC6_FTM0(1);
-	/**It enable the FTM*/
-	FTM0->MODE |= FTM_MODE_FTMEN_MASK;
-	/**Assign modulo register with a predefined value*/
-	FTM0->MOD = mod; //Valor al que se desborda
+void FlexTimer_PWM_CA_Init()
+{
 
-	/**Selects the FTM behavior in BDM mode.In this case in functional mode*/
-	FTM0->CONF |= FTM_CONF_BDMMODE(3);
 
-	/**Configure FlexTimer in output compare in toggle mode*/
-	switch (els) {
-	case TOOGLE:
-		FTM0->CONTROLS[0].CnSC = FTM_CnSC_MSA(1) | FTM_CnSC_ELSA(1);
-		break;
-	case SET:
-		delay(65000);
-		FTM0->CONTROLS[0].CnSC = FTM_CnSC_MSA(1) | FTM_CnSC_ELSA(1) | FTM_CnSC_ELSB(1);
-		break;
-	case CLEAR:
-		delay(65000);
-		FTM0->CONTROLS[0].CnSC = FTM_CnSC_MSA(1) | FTM_CnSC_ELSA(0) | FTM_CnSC_ELSB(1);
-		break;
-	default:
-		break;
-	}
-
-	/**Assign channel value register with a predefined value*/
-	FTM0->CONTROLS[0].CnV = cnv; //Cuando se llegue a este valor, se va a dar un toogle
-
-	/**Select clock source and prescaler*/
-	FTM0->SC |= FTM_SC_CLKS(Flex_Timer_clk_N) | FTM_SC_PS(Flex_Timer_ps_N);
-}
-
-void PWM_init_p(ft_mode mode) {
-	switch (mode) {
-	case EDGE_ALIGNED_PWM:
-		break;
-	case CENTER_ALIGNED_PWM:
 	/**Clock gating for FlexTimer*/
 	SIM->SCGC6 |= SIM_SCGC6_FTM0(1);
 	/**When write protection is enabled (WPDIS = 0), write protected bits cannot be written.
@@ -112,30 +82,27 @@ void PWM_init_p(ft_mode mode) {
 	/**Enables the writing over all registers*/
 	FTM0->MODE &= ~ FTM_MODE_FTMEN_MASK;
 	/**Assigning a default value for modulo register*/
-	FTM0->MOD = 0xA;
-		/**Selects the Edge-Aligned PWM mode mode*/
+	FTM0->MOD = MOD_255_VALUE;
+	/**Selects the Edge-Aligned PWM mode mode*/
 	FTM0->CONTROLS[0].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1);
 	/**Assign a duty cycle of 50%*/
-	FTM0->CONTROLS[0].CnV = ((FTM0->MOD)/5);//80% of work cycle
+	FTM0->CONTROLS[0].CnV = ((FTM0->MOD)/2);//Default 50% of duty cycle
+
+	FTM0->CONTROLS[1].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1);
+	/**Assign a duty cycle of 50%*/
+	FTM0->CONTROLS[1].CnV = ((FTM0->MOD)/2);//Default 50% of duty cycle
+
+	FTM0->CONTROLS[2].CnSC = FTM_CnSC_MSB(1) | FTM_CnSC_ELSB(1);
+	/**Assign a duty cycle of 50%*/
+	FTM0->CONTROLS[2].CnV = ((FTM0->MOD)/2);//Default 50% of duty cycle
+
 	/**Configure the times*/
-	FTM0->SC |= FTM_SC_CLKS(FLEX_TIMER_CLKS_1)| FTM_SC_PS(FLEX_TIMER_PS_1);
-		break;
-	case COMBINE_PWM:
-		break;
-	default:
-		break;
-	}
-}
+	FTM0->SC |= FTM_SC_CLKS(FLEX_TIMER_CLKS_1)| FTM_SC_PS(FLEX_TIMER_PS_128);
 
-void Capture_init(ft_mode mode) {
-	switch (mode) {
-	case INPUT_CAPTURE:
-		break;
-	case DUAL_EDGE_CAPTURE_MODE:
-		break;
-	default:
-		break;
-	}
+	GPIO_clock_gating(GPIO_C); //External LEDs in Port C #YOLO
+	GPIO_pin_control_register(GPIO_C, bit_1, &FTM_Pin_config); //PTC1 Alt4, FTM0_CH0. RED LED
+	GPIO_pin_control_register(GPIO_C, bit_2, &FTM_Pin_config); //PTC2 Alt4, FTM0_CH1. GREEN LED
+	GPIO_pin_control_register(GPIO_C, bit_3, &FTM_Pin_config); //PTC3 Alt4, FTM0_CH2. BLUE LED
+
 
 }
-

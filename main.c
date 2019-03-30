@@ -27,31 +27,68 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
+ 
 /**
- * @file    P2.c
+ * @file    Tarea8_4_80_WC_FTM.c
  * @brief   Application entry point.
  */
-#include <stdio.h>
-#include "board.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-#include "clock_config.h"
-#include "MK64F12.h"
-#include "Pantalla.h"
-#include "Delay.h"
+#include "MK64F12.h" /* include peripheral declarations */
+#include "GPIO.h"
+#include "FlexTimer.h"
+#include "NVIC.h"
+#include "stdint.h"
+#include "Bits.h"
+#include "PushButton.h"
+#include "ManualMode.h"
+//#include "GlobalFunctions.h"
 
-float pot = 0.0;
+/**
+ * Output compare frequency = (bus clock)/(Prescaler(mod+1)). = 1.05MHz
+ * Note that is the same frequency of the overflow flow.
+ */
 
-int main(void) {
-	pantalla_init();
-	while(1){
-	pantalla_RGB_Frecuencia(pot);
-	pot=pot+0.1;
-	if(pot>10.0){
-		pot=0.0;
+void delay(uint16_t delay)
+{
+	volatile int counter, counter2;
+
+	for(counter2=16; counter2 > 0; counter2--)
+	{
+		for(counter=delay; counter > 0; counter--);
+
 	}
-	delay(36000);
+}
+
+int main(void)
+{
+	PushButton_sw2_config();
+	PushButton_sw3_config();
+	/**Configuration function for FlexTimer*/
+	FlexTimer_PWM_CA_Init();
+	FlexTimer_PWM_Modify_Duty_Cycle(0, CH1);
+	FlexTimer_PWM_Modify_Duty_Cycle(0, CH2);
+	NVIC_set_basepri_threshold(PRIORITY_12);
+	NVIC_enable_interrupt_and_priotity(PORTB_IRQ, PRIORITY_4);
+	NVIC_enable_interrupt_and_priotity(PORTA_IRQ, PRIORITY_4);
+	NVIC_enable_interrupt_and_priotity(PORTC_IRQ, PRIORITY_4);
+
+	NVIC_global_enable_interrupts;
+
+	PushButton_external_config(GPIO_B, bit_2, PTB2_MASK); //B0
+	PushButton_external_config(GPIO_B, bit_3, PTB2_MASK); //B1
+	PushButton_external_config(GPIO_B, bit_10, PTB2_MASK); //B2
+	PushButton_external_config(GPIO_B, bit_11, PTB2_MASK); //B3
+	PushButton_external_config(GPIO_B, bit_9, PTB2_MASK); //B4
+	PushButton_external_config(GPIO_B, bit_19, PTB2_MASK); //B5
+	PushButton_external_config(GPIO_B, bit_18, PTB2_MASK); //B6
+
+	GPIO_callback_init(GPIO_B, &PushButton_external_handler);
+	manual_RGB_change_value();
+
+	while(1)
+	{
+		FlexTimer_PWM_Modify_Duty_Cycle(0, CH0);
+		FlexTimer_PWM_Modify_Duty_Cycle(255, CH1);
+		FlexTimer_PWM_Modify_Duty_Cycle(0, CH2);
 	}
 	return 0;
 }
