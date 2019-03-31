@@ -11,6 +11,7 @@
 #include "GPIO.h"
 #include "Pushbutton.h"
 #include "FlexTimer.h"
+#include "RGB_external.h"
 
 
 void manual_RGB_change_value(void);
