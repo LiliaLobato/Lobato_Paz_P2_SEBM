@@ -13,6 +13,21 @@
 
 #include "GPIO.h"
 #include "MK64F12.h"
+#include "stdint.h"
+
+typedef enum {
+	INPUT_CAPTURE,
+	OUTPUT_COMPARE,
+	EDGE_ALIGNED_PWM,
+	CENTER_ALIGNED_PWM,
+	COMBINE_PWM,
+	DUAL_EDGE_CAPTURE_MODE
+} ft_mode;
+
+typedef enum {
+	TOOGLE, CLEAR, SET
+} input_capture_els;
+
 
 #define FLEX_TIMER_CLKS_0  (0U)
 #define FLEX_TIMER_CLKS_1  (1U)
@@ -56,6 +71,10 @@ uint32_t FlexTimer_get_mod(uint32_t output_frecuency, float frecuency_scaler);
 uint32_t FlexTimer_get_output_frecuency(uint16_t channel_value);
 
 void FlexTimer_PWM_CA_Init();
+void FlexTimer_Init();
+void Compare_init(uint32_t mod, uint32_t cnv, input_capture_els els, uint8_t Flex_Timer_clk_N, uint8_t Flex_Timer_ps_N);
+void PWM_init_p(ft_mode mode);
+void Capture_init(ft_mode mode);
 
 
 #endif /* FLEXTIMER_H_ */
