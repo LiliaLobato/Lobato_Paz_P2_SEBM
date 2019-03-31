@@ -58,12 +58,14 @@ int main(void) {
 	pantalla_init();
 	DAC_init();
 	pantalla_main();
+	FlexTimer_PWM_CA_Init();
 	POTENCIOMETRO_PIT_init();
 	pantalla_main();
 	pantalla_RGB_ADC();
 		while(1){
 			POTENCIOMETRO_result();
 			pantalla_RGB_ADC_refresh(POTENCIOMETRO_0to33());
+			PH_rgb_change();
 		}
 		return 0;
 }

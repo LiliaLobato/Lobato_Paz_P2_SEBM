@@ -164,12 +164,16 @@ void pantalla_RGB_ADC_refresh(float Pot) {	//uint8_t entero, uint8_t decimal) {
 	LCD_nokia_send_char(intToChar(PotD1));
 }
 void pantalla_RGB_Secuencial(RGB_Bn Boton, uint8_t BotonCounter) {
+	//TODO: CAMBIAR ULTIMA LETRA
 	//BotonCounter va de 0 a 9, 0 es el primer Boton presionado, 9 es el último
 	uint8_t flag_char = FALSE;
 	if(0==BotonCounter){
 		LCD_nokia_clear();/*! It clears the information printed in the LCD*/
 		LCD_nokia_goto_xy(0, 3);
 		flag_char = TRUE;
+	}
+	if(BOTONMAX != BotonCounter && 0!=BotonCounter){
+		LCD_nokia_send_string(", ");
 	}
 	switch (Boton) {
 	case B1:
@@ -193,12 +197,9 @@ void pantalla_RGB_Secuencial(RGB_Bn Boton, uint8_t BotonCounter) {
 	default:
 		break;
 	}
-	if(BOTONMAX != BotonCounter){
-		LCD_nokia_send_string(", ");
-	}
 }
 
-void pantalla_RGB_Frecuencia(float Fr) {
+void pantalla_RGB_Frecuencia_refresh(float Fr) {
 	LCD_nokia_clear();/*! It clears the information printed in the LCD*/
 	//Genera el valor
 	uint8_t FrR0 = (uint8_t) Fr / 10;
@@ -207,8 +208,6 @@ void pantalla_RGB_Frecuencia(float Fr) {
 	uint8_t FrD1 = (uint8_t) ((Fr - (FrR1 + (FrR0 * 10))) * 100) - (FrD0 * 10);
 
 	//Desplegar Pantalla
-	LCD_nokia_goto_xy(0, 1);
-	LCD_nokia_send_string("FRECUENCIA");
 	LCD_nokia_goto_xy(0, 2);
 	LCD_nokia_send_char(intToChar(FrR0));
 	LCD_nokia_send_char(intToChar(FrR1));
@@ -216,6 +215,13 @@ void pantalla_RGB_Frecuencia(float Fr) {
 	LCD_nokia_send_char(intToChar(FrD0));
 	LCD_nokia_send_char(intToChar(FrD1));
 	LCD_nokia_send_string("KHz");
+}
+void pantalla_RGB_Frecuencia() {
+	LCD_nokia_clear();/*! It clears the information printed in the LCD*/
+
+	//Desplegar Pantalla
+	LCD_nokia_goto_xy(0, 1);
+	LCD_nokia_send_string("FRECUENCIA");
 	LCD_nokia_goto_xy(0, 3);
 	LCD_nokia_send_string("SW3=ON");
 	LCD_nokia_goto_xy(0, 4);

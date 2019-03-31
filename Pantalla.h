@@ -25,7 +25,8 @@ void pantalla_RGB_Manual(void);
 void pantalla_RGB_ADC();
 void pantalla_RGB_ADC_refresh(float Pot);
 void pantalla_RGB_Secuencial(RGB_Bn Boton, uint8_t BotonCounter);
-void pantalla_RGB_Frecuencia(float Fr);
+void pantalla_RGB_Frecuencia();
+void pantalla_RGB_Frecuencia_refresh(float Fr);
 
 //funciones backend
 uint8_t intToChar (uint8_t valor);
