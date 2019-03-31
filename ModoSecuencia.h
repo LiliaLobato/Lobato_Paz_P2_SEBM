@@ -13,12 +13,12 @@
 #include "GPIO.h"
 #include "PushButton.h"
 
-void (*funcpointer[10])(void) =
-{
-		0,0,0,0,0,0,0,0,0,0,
-};
+#define SYSTEM_CLOCK (10500000U)
+#define ONE_SEG_DELAY (4.0F)
 
 
+
+void simon_dice(uint8_t max_count);
 void simon_dice_init(void);
 
 

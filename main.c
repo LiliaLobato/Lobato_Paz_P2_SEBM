@@ -42,6 +42,7 @@
 #include "ManualMode.h"
 #include "RGB.h"
 #include "RGB_external.h"
+#include "ModoSecuencia.h"
 //#include "GlobalFunctions.h"
 
 /**
@@ -76,12 +77,12 @@ int main(void)
 
 	GPIO_callback_init(GPIO_B, &PushButton_external_handler);
 	manual_RGB_change_value();
-
+	simon_dice_init();
 	while(1)
 	{
-		RGB_external_change_color(0, RGB_RED);
-		FlexTimer_PWM_Modify_Duty_Cycle(255, RGB_GREEN);
-		FlexTimer_PWM_Modify_Duty_Cycle(0, RGB_BLUE);
+		RGB_external_change_color(MIN, RGB_RED);
+		RGB_external_change_color(MAX, RGB_GREEN);
+		RGB_external_change_color(MIN, RGB_BLUE);
 	}
 	return 0;
 }
