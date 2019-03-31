@@ -40,6 +40,8 @@
 #include "Bits.h"
 #include "PushButton.h"
 #include "ManualMode.h"
+#include "RGB.h"
+#include "RGB_external.h"
 //#include "GlobalFunctions.h"
 
 /**
@@ -47,16 +49,7 @@
  * Note that is the same frequency of the overflow flow.
  */
 
-void delay(uint16_t delay)
-{
-	volatile int counter, counter2;
 
-	for(counter2=16; counter2 > 0; counter2--)
-	{
-		for(counter=delay; counter > 0; counter--);
-
-	}
-}
 
 int main(void)
 {
@@ -86,9 +79,9 @@ int main(void)
 
 	while(1)
 	{
-		FlexTimer_PWM_Modify_Duty_Cycle(0, CH0);
-		FlexTimer_PWM_Modify_Duty_Cycle(255, CH1);
-		FlexTimer_PWM_Modify_Duty_Cycle(0, CH2);
+		RGB_external_change_color(0, RGB_RED);
+		FlexTimer_PWM_Modify_Duty_Cycle(255, RGB_GREEN);
+		FlexTimer_PWM_Modify_Duty_Cycle(0, RGB_BLUE);
 	}
 	return 0;
 }

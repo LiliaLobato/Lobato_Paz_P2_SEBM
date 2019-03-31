@@ -91,9 +91,10 @@ void manual_RGB_change_value()
 			clear_pbn_flag(PB6);
 		}
 
-		FlexTimer_PWM_Modify_Duty_Cycle((red_intensity), CH0); //update Blue LED intensity
-		FlexTimer_PWM_Modify_Duty_Cycle((green_intensity), CH1); //update Blue LED intensity
-		FlexTimer_PWM_Modify_Duty_Cycle((blue_intensity), CH2); //update Blue LED intensity
+		RGB_external_change_color((red_intensity), RGB_RED); //update Blue LED intensity
+		RGB_external_change_color((green_intensity), RGB_GREEN); //update Blue LED intensity
+		RGB_external_change_color((blue_intensity), RGB_BLUE); //update Blue LED intensity
 	}
+	clear_sw2_flag();
 
 }
