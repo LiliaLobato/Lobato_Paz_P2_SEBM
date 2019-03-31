@@ -10,12 +10,11 @@
 #include "Bits.h"
 #include "LCD_nokia.h"
 #include "LCD_nokia_images.h"
-#include "stdint.h"
 #include "SPI.h"
 #include "Delay.h"
 #include "Pantalla.h"
 
-#define BOTONMAX 9
+
 
 /*! This array hold the initial picture that is shown in the LCD. Note that extern should be avoided*/
 const uint8_t inicio[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -143,24 +142,26 @@ void pantalla_RGB_Manual() {
 	LCD_nokia_goto_xy(0, 3);
 	LCD_nokia_send_string(&menu1[0]);
 }
-void pantalla_RGB_ADC(float Pot) {	//uint8_t entero, uint8_t decimal) {
+void pantalla_RGB_ADC() {	//uint8_t entero, uint8_t decimal) {
 	LCD_nokia_clear();/*! It clears the information printed in the LCD*/
+	//Desplegar Pantalla
+	LCD_nokia_goto_xy(0, 1);
+	LCD_nokia_send_string("VOLTAJE");
+	LCD_nokia_goto_xy(0, 3);
+	LCD_nokia_send_string("SW3=ON");
+	LCD_nokia_goto_xy(0, 4);
+	LCD_nokia_send_string("SW2=OFF");
+}
+void pantalla_RGB_ADC_refresh(float Pot) {	//uint8_t entero, uint8_t decimal) {
 	//Genera el valor
 	uint8_t PotR = (uint8_t) Pot;
 	uint8_t PotD0 = (uint8_t) ((Pot - PotR) * 10);
 	uint8_t PotD1 = (uint8_t) ((Pot - PotR) * 100) - (PotD0 * 10);
-	//Desplegar Pantalla
-	LCD_nokia_goto_xy(0, 1);
-	LCD_nokia_send_string("VOLTAJE");
 	LCD_nokia_goto_xy(0, 2);
 	LCD_nokia_send_char(intToChar(PotR));
 	LCD_nokia_send_char('.');
 	LCD_nokia_send_char(intToChar(PotD0));
 	LCD_nokia_send_char(intToChar(PotD1));
-	LCD_nokia_goto_xy(0, 3);
-	LCD_nokia_send_string("SW3=ON");
-	LCD_nokia_goto_xy(0, 4);
-	LCD_nokia_send_string("SW2=OFF");
 }
 void pantalla_RGB_Secuencial(RGB_Bn Boton, uint8_t BotonCounter) {
 	//BotonCounter va de 0 a 9, 0 es el primer Boton presionado, 9 es el último

@@ -40,18 +40,30 @@
 #include "MK64F12.h"
 #include "Pantalla.h"
 #include "Delay.h"
-
-float pot = 0.0;
+#include "Potenciometro.h"
+float poto = 0.0;
 
 int main(void) {
+	/*
 	pantalla_init();
+
+	pantalla_main();
+	POTENCIOMETRO_PIT_init();
 	while(1){
-	pantalla_RGB_Frecuencia(pot);
-	pot=pot+0.1;
-	if(pot>10.0){
-		pot=0.0;
-	}
-	delay(36000);
+	POTENCIOMETRO_result();
+	pantalla_RGB_ADC(3.33444);
 	}
 	return 0;
+	*/
+	pantalla_init();
+	DAC_init();
+	pantalla_main();
+	POTENCIOMETRO_PIT_init();
+	pantalla_main();
+	pantalla_RGB_ADC();
+		while(1){
+			POTENCIOMETRO_result();
+			pantalla_RGB_ADC_refresh(POTENCIOMETRO_0to33());
+		}
+		return 0;
 }

@@ -77,7 +77,6 @@ void RGB_purple_off(void);
  	 \brief
  	 	 Genera un Delay de tiempo n
  */
-void delay(uint32_t delay);
 
 //Permite encender y apagar cada color sin importar el estado previo
 void encender_led(led_color led);
